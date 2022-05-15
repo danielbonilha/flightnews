@@ -38,7 +38,13 @@ func (s *Service) getArticles(offset string, limit string) ([]*FlightNews, error
 	}
 
 	intLimit, err := strconv.ParseInt(limit, 10, 64)
-	if err != nil || intLimit < 1 {
+	if err != nil {
+		return nil, errors.Message{
+			Msg:        "Invalid limit",
+			StatusCode: 400,
+		}
+	}
+	if intLimit < 1 {
 		return nil, errors.Message{
 			Msg:        "Limit must be greater than zero",
 			StatusCode: 400,
@@ -63,7 +69,7 @@ func (s *Service) getArticle(id string) (*FlightNews, error) {
 func (s *Service) postArticle(body *FlightNews) (*FlightNews, error) {
 	if body.Id == 0 {
 		return nil, errors.Message{
-			Msg:        "Invalid Id",
+			Msg:        "Invalid id",
 			StatusCode: 400,
 		}
 	}
