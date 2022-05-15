@@ -12,7 +12,7 @@ type (
 	}
 
 	repository interface {
-		getArticles() ([]*FlightNews, error)
+		getArticles(offset int64, limit int64) ([]*FlightNews, error)
 		getArticle(int) (*FlightNews, error)
 		postArticle(*FlightNews) (*FlightNews, error)
 		putArticle(int, *FlightNews) (*FlightNews, error)
@@ -20,8 +20,32 @@ type (
 	}
 )
 
-func (s *Service) getArticles() ([]*FlightNews, error) {
-	return s.Repository.getArticles()
+func (s *Service) getArticles(offset string, limit string) ([]*FlightNews, error) {
+	if offset == "" {
+		offset = "0"
+	}
+
+	if limit == "" {
+		limit = "10"
+	}
+
+	intOffset, err := strconv.ParseInt(offset, 10, 64)
+	if err != nil || intOffset < 0 {
+		return nil, errors.Message{
+			Msg:        "Invalid offset",
+			StatusCode: 400,
+		}
+	}
+
+	intLimit, err := strconv.ParseInt(limit, 10, 64)
+	if err != nil || intLimit < 1 {
+		return nil, errors.Message{
+			Msg:        "Limit must be greater than zero",
+			StatusCode: 400,
+		}
+	}
+
+	return s.Repository.getArticles(intOffset, intLimit)
 }
 
 func (s *Service) getArticle(id string) (*FlightNews, error) {
@@ -32,6 +56,7 @@ func (s *Service) getArticle(id string) (*FlightNews, error) {
 			StatusCode: 400,
 		}
 	}
+
 	return s.Repository.getArticle(intId)
 }
 

@@ -11,8 +11,8 @@ type (
 	}
 
 	service interface {
-		getArticles() ([]*FlightNews, error)
-		getArticle(string) (*FlightNews, error)
+		getArticles(offset string, limit string) ([]*FlightNews, error)
+		getArticle(id string) (*FlightNews, error)
 		postArticle(*FlightNews) (*FlightNews, error)
 		putArticle(string, *FlightNews) (*FlightNews, error)
 		deleteArticle(string) error
@@ -20,7 +20,10 @@ type (
 )
 
 func (h *Handler) GetArticles(c echo.Context) error {
-	result, err := h.Service.getArticles()
+	offset := c.QueryParam("offset")
+	limit := c.QueryParam("limit")
+
+	result, err := h.Service.getArticles(offset, limit)
 	if err != nil {
 		err := err.(errors.Message)
 		c.JSON(err.HTTPCode(), err)

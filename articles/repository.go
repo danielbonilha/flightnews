@@ -5,6 +5,7 @@ import (
 	errors "coodesh/error"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const dbName = "Cluster0"
@@ -14,11 +15,11 @@ type NoSqlRepository struct {
 	Conn *mongo.Client
 }
 
-func (r *NoSqlRepository) getArticles() ([]*FlightNews, error) {
+func (r *NoSqlRepository) getArticles(offset int64, limit int64) ([]*FlightNews, error) {
 	coll := r.Conn.Database(dbName).Collection(collectionName)
-	filter := bson.D{}
+	opts := options.Find().SetSkip(offset).SetLimit(limit)
 
-	cursor, err := coll.Find(context.TODO(), filter)
+	cursor, err := coll.Find(context.TODO(), bson.D{}, opts)
 	if err != nil {
 		return nil, errors.Message{
 			Msg:        err.Error(),
