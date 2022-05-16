@@ -2,7 +2,10 @@ package articles
 
 import (
 	errors "coodesh/error"
+	"fmt"
 	"github.com/labstack/echo/v4"
+	"github.com/robfig/cron/v3"
+	"time"
 )
 
 type (
@@ -16,6 +19,7 @@ type (
 		postArticle(*FlightNews) (*FlightNews, error)
 		putArticle(string, *FlightNews) (*FlightNews, error)
 		deleteArticle(string) error
+		populateArticles()
 	}
 )
 
@@ -101,4 +105,25 @@ func (h *Handler) DeleteArticle(c echo.Context) error {
 
 	c.NoContent(200)
 	return nil
+}
+
+func (h *Handler) PopulateArticles(c echo.Context) error {
+	go h.Service.populateArticles()
+	c.NoContent(202)
+	return nil
+}
+
+func (h *Handler) ScheduledPopulateArticles() {
+	loc, _ := time.LoadLocation("America/Sao_Paulo")
+	c := cron.New(cron.WithLocation(loc))
+
+	_, err := c.AddFunc("0 9 * * *", func() {
+		go h.Service.populateArticles()
+	})
+
+	if err == nil {
+		c.Start()
+	} else {
+		fmt.Printf("Invalid cron: %s", err.Error())
+	}
 }

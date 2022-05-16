@@ -3,6 +3,7 @@ package articles
 import (
 	errors "coodesh/error"
 	_ "errors"
+	"fmt"
 	"strconv"
 )
 
@@ -124,4 +125,8 @@ func (s *Service) deleteArticle(id string) error {
 	}
 
 	return s.Repository.deleteArticle(intId)
+}
+
+func (s *Service) populateArticles() {
+	fmt.Println("Will populate all articles at 9am BRT or after GET /articles/populate")
 }
