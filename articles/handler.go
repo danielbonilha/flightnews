@@ -14,7 +14,7 @@ type (
 	}
 
 	service interface {
-		getArticles(offset string, limit string) ([]*FlightNews, error)
+		getArticles(offset string, limit string) ([]FlightNews, error)
 		getArticle(id string) (*FlightNews, error)
 		postArticle(*FlightNews) (*FlightNews, error)
 		putArticle(string, *FlightNews) (*FlightNews, error)

@@ -247,14 +247,14 @@ func buildService() *Service {
 // for mocking purposes,
 // limit == 99 will return error case
 // any other limit will return a success case
-func (m *mockRepository) getArticles(offset int64, limit int64) ([]*FlightNews, error) {
+func (m *mockRepository) getArticles(offset int64, limit int64) ([]FlightNews, error) {
 	if limit == 99 {
 		return nil, errors.Message{
 			Msg:        "Unexpected error",
 			StatusCode: 500,
 		}
 	}
-	return []*FlightNews{{Id: 1}, {Id: 2}, {Id: 3}}, nil
+	return []FlightNews{{Id: 1}, {Id: 2}, {Id: 3}}, nil
 }
 
 // for mocking purposes,
@@ -281,7 +281,7 @@ func (m *mockRepository) getArticle(id int) (*FlightNews, error) {
 // for mocking purposes,
 // id == 99 will return error case
 // any other id will return a success case
-func (m *mockRepository) postArticle(body *FlightNews) (*FlightNews, error) {
+func (m *mockRepository) insertArticle(body *FlightNews) (*FlightNews, error) {
 	if body.Id == 99 {
 		return nil, errors.Message{
 			Msg:        "Unexpected error",
@@ -295,7 +295,7 @@ func (m *mockRepository) postArticle(body *FlightNews) (*FlightNews, error) {
 // for mocking purposes,
 // id == 99 will return error case
 // any other id will return a success case
-func (m *mockRepository) putArticle(id int, body *FlightNews) (*FlightNews, error) {
+func (m *mockRepository) updateArticle(id int, body *FlightNews) (*FlightNews, error) {
 	if id == 99 {
 		return nil, errors.Message{
 			Msg:        "Unexpected error",
@@ -318,4 +318,8 @@ func (m *mockRepository) deleteArticle(id int) error {
 	}
 
 	return nil
+}
+
+func (m *mockRepository) countArticles() (int64, error) {
+	return 0, nil
 }

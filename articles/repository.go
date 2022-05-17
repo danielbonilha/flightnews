@@ -3,6 +3,7 @@ package articles
 import (
 	"context"
 	errors "coodesh/error"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -15,7 +16,8 @@ type NoSqlRepository struct {
 	Conn *mongo.Client
 }
 
-func (r *NoSqlRepository) getArticles(offset int64, limit int64) ([]*FlightNews, error) {
+func (r *NoSqlRepository) getArticles(offset int64, limit int64) ([]FlightNews, error) {
+	fmt.Printf("Getting articles [offset=%d][limit=%d]\n", offset, limit)
 	coll := r.Conn.Database(dbName).Collection(collectionName)
 	opts := options.Find().SetSkip(offset).SetLimit(limit)
 
@@ -31,7 +33,7 @@ func (r *NoSqlRepository) getArticles(offset int64, limit int64) ([]*FlightNews,
 		_ = cursor.Close(context.TODO())
 	}(cursor)
 
-	resultItems := make([]*FlightNews, 0)
+	resultItems := make([]FlightNews, 0)
 	for cursor.Next(context.TODO()) {
 		var result FlightNews
 		if err := cursor.Decode(&result); err != nil {
@@ -40,13 +42,14 @@ func (r *NoSqlRepository) getArticles(offset int64, limit int64) ([]*FlightNews,
 				StatusCode: 500,
 			}
 		}
-		resultItems = append(resultItems, &result)
+		resultItems = append(resultItems, result)
 	}
 
 	return resultItems, nil
 }
 
 func (r *NoSqlRepository) getArticle(id int) (*FlightNews, error) {
+	fmt.Printf("Getting article [id=%d]\n", id)
 	coll := r.Conn.Database(dbName).Collection(collectionName)
 	var result FlightNews
 
@@ -67,7 +70,8 @@ func (r *NoSqlRepository) getArticle(id int) (*FlightNews, error) {
 	return &result, nil
 }
 
-func (r *NoSqlRepository) postArticle(body *FlightNews) (*FlightNews, error) {
+func (r *NoSqlRepository) insertArticle(body *FlightNews) (*FlightNews, error) {
+	fmt.Printf("Persisting article [id=%d]\n", body.Id)
 	coll := r.Conn.Database(dbName).Collection(collectionName)
 	_, err := coll.InsertOne(context.TODO(), body)
 	if err != nil {
@@ -80,7 +84,8 @@ func (r *NoSqlRepository) postArticle(body *FlightNews) (*FlightNews, error) {
 	return body, nil
 }
 
-func (r *NoSqlRepository) putArticle(id int, body *FlightNews) (*FlightNews, error) {
+func (r *NoSqlRepository) updateArticle(id int, body *FlightNews) (*FlightNews, error) {
+	fmt.Printf("Updating article [id=%d]\n", id)
 	coll := r.Conn.Database(dbName).Collection(collectionName)
 	filter := bson.D{{"id", id}}
 
@@ -96,6 +101,7 @@ func (r *NoSqlRepository) putArticle(id int, body *FlightNews) (*FlightNews, err
 }
 
 func (r *NoSqlRepository) deleteArticle(id int) error {
+	fmt.Printf("Deleting article [id=%d]\n", id)
 	coll := r.Conn.Database(dbName).Collection(collectionName)
 	filter := bson.D{{"id", id}}
 
@@ -107,4 +113,19 @@ func (r *NoSqlRepository) deleteArticle(id int) error {
 		}
 	}
 	return nil
+}
+
+func (r *NoSqlRepository) countArticles() (int64, error) {
+	fmt.Println("Counting local articles")
+	coll := r.Conn.Database(dbName).Collection(collectionName)
+	filter := bson.D{}
+
+	count, err := coll.CountDocuments(context.TODO(), filter)
+	if err != nil {
+		return 0, errors.Message{
+			Msg:        err.Error(),
+			StatusCode: 500,
+		}
+	}
+	return count, nil
 }
