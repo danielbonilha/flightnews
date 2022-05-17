@@ -1,8 +1,8 @@
 package articles
 
 import (
-	errors "coodesh/error"
 	"fmt"
+	errors "github.com/danielbonilha/flightnews/error"
 	"github.com/labstack/echo/v4"
 	"github.com/robfig/cron/v3"
 	"time"

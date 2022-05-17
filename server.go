@@ -1,8 +1,8 @@
 package main
 
 import (
-	"coodesh/articles"
-	"coodesh/mongodb"
+	"github.com/danielbonilha/flightnews/articles"
+	"github.com/danielbonilha/flightnews/mongodb"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -14,7 +14,7 @@ func main() {
 	configRoutes(e, handler)
 	handler.ScheduledPopulateArticles()
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":8080"))
 }
 
 func configRoutes(e *echo.Echo, handler articles.Handler) {

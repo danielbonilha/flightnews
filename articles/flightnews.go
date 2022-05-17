@@ -1,9 +1,9 @@
 package articles
 
 import (
-	errors "coodesh/error"
 	"encoding/json"
 	"fmt"
+	errors "github.com/danielbonilha/flightnews/error"
 	"io/ioutil"
 	"net/http"
 	"strconv"

@@ -1,9 +1,9 @@
 package articles
 
 import (
-	errors "coodesh/error"
 	_ "errors"
 	"fmt"
+	errors "github.com/danielbonilha/flightnews/error"
 	"strconv"
 	"sync"
 )

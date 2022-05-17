@@ -1,7 +1,7 @@
 package articles
 
 import (
-	errors "coodesh/error"
+	errors "github.com/danielbonilha/flightnews/error"
 	"testing"
 )
 

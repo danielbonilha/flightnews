@@ -2,8 +2,8 @@ package articles
 
 import (
 	"context"
-	errors "coodesh/error"
 	"fmt"
+	errors "github.com/danielbonilha/flightnews/error"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
