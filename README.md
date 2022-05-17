@@ -2,16 +2,16 @@
 > This is a challenge by Coodesh
 
 ## Test application
-> go test ./...
+`go test ./...`
 
 ## Run locally
-> go run server.go
+`go run server.go`
 
 ## Build docker image
-> docker build --tag flightnews .
+`docker build --tag flightnews .`
 
 ## Run image
-> docker run -p 8080:8080 flightnews
+`docker run -p 8080:8080 flightnews`
 
 ### Tech stack
 - Golang
