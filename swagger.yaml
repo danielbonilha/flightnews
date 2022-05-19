@@ -1,0 +1,242 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:8080
+info:
+  description: This is a challenge by Coodesh
+  version: "1.0.0"
+  title: This is a challenge by Coodesh
+  contact:
+    email: dani.bonilha@gmail.com
+tags:
+  - name: Articles
+    description: All Article Operations
+paths:
+  /:
+    get:
+      tags:
+        - articles
+      summary: Root test url
+      description: Root test URL
+      responses:
+        '200':
+          description: Ok
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '"message": "Back-end Challenge 2021 🏅 - Space Flight News"'
+  /articles:
+    get:
+      tags:
+        - articles
+      summary: Find all articles
+      description: Find all articles
+      parameters:
+        - in: query
+          name: offset
+          description: Number of records to offset (for pagination)
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: Number of record per page (for pagination). Defaults to 10 if not provided
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Article'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - articles
+      summary: Create an article
+      description: Create an article
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Article'
+        description: Article item to add
+  /articles/{id}:
+    get:
+      tags:
+        - articles
+      summary: Get article by Id
+      description: Get article by Id
+      parameters:
+        - in: path
+          name: id
+          description: id of the article
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - articles
+      summary: Update an article by Id
+      description: Update an article by Id
+      parameters:
+        - in: path
+          name: id
+          description: id of the article
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Article'
+        description: Article item to add
+    delete:
+      tags:
+        - articles
+      summary: Delete an article
+      description: Delete an article by Id
+      parameters:
+        - in: path
+          name: id
+          description: id of the article
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad request
+  /articles/populate:
+    get:
+      tags:
+        - articles
+      summary: Synchronize articles from remote repository
+      description: |
+        Populate local database with all articles from remote database
+      responses:
+        '202':
+          description: Accepted
+components:
+  schemas:
+    Article:
+      type: object
+      required:
+        - title
+        - url
+        - imageUrl
+        - newsSite
+        - publishedAt
+      properties:
+        id:
+          type: integer
+          example: 10000
+        featured:
+          type: boolean
+          example: false
+        title:
+          type: string
+          example: NASA TV to Air Launch of Space Station Module, Departure of Another
+        url:
+          type: string
+          example: http://www.nasa.gov/press-release/nasa-tv-to-air-launch-of-space-station-module-departure-of-another
+        imageUrl:
+          type: string
+          example: https://www.nasa.gov/sites/default/files/thumbnails/image/mlm_at_baikonur.jpg?itok=SrfC6Yzm
+        newsSite:
+          type: string
+          example: NASA
+        summary:
+          type: string
+          example: NASA will provide live coverage of a new Russian science module’s launch and automated docking to the International Space Station, and the undocking of another module that has been part of the orbital outpost for the past 20 years.
+        publishedAt:
+          type: string
+          format: date-time
+          example: '2021-07-13T20:22:00.000Z'
+        launches:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+            properties:
+              id:
+                type: string
+                format: uuid
+                example: 27fd5d5a-6935-4697-98b4-b409f029e2f0
+              provider:
+                type: string
+                example: Launch Library 2
+        events:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+            properties:
+              id:
+                type: string
+                example: ""
+              provider:
+                type: string
+                example: Launch Library 2
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: An error
